@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "House.h"
 #include "GameFramework/Actor.h"
 #include "Road.generated.h"
 
@@ -22,6 +23,9 @@ public:
 	void SpawnHouses();
 
 private:
+	UPROPERTY(Category=Spawning, EditAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
+	TSubclassOf<AHouse> HouseClass;
+
 	UPROPERTY(Category=Components, VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UStaticMeshComponent> RoadMesh;
 	UPROPERTY(Category=Components, VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
