@@ -34,6 +34,8 @@ APlayerCharacter::APlayerCharacter()
 	AudioComponent->SetupAttachment(RootComponent);
 
 	MaxMoveSpeed = 50000.0f;
+	PackageLaunchForce = 220.0f;
+	PackageThrowForce = 2000.0f;
 	MoveSpeedMultiplier = 1.1f;
 	Health = 3;
 	Score = 0;
@@ -84,12 +86,13 @@ void APlayerCharacter::ThrowPackageRight(const FInputActionValue& Value)
 		auto KeyDown = GetActionPressedKeys(ThrowRightAction);
 		if (KeyDown == CurrentPopUpKey && bInZone)
 		{
-			bKeyPressed = true;
 			IncreaseScore(1);
 			ThrowDelivery();
 		}
 		else
 			DamageHealth();
+
+		bKeyPressed = true;
 	}
 }
 void APlayerCharacter::DamageHealth()
@@ -109,12 +112,13 @@ void APlayerCharacter::ThrowPackageLeft()
 		UE_LOG(LogTemp, Warning, TEXT("KeyPressed %s | Current Key %s"), *KeyDown.GetDisplayName().ToString(), *CurrentPopUpKey.GetDisplayName().ToString());
 		if (KeyDown == CurrentPopUpKey && bInZone)
 		{
-			bKeyPressed = true;
 			IncreaseScore(1);
 			ThrowDelivery();
 		}
 		else
 			DamageHealth();
+
+		bKeyPressed = true;
 	}
 }
 
@@ -125,16 +129,33 @@ void APlayerCharacter::ThrowDelivery()
 
 	// Calculate the velocity vector to reach the delivery location
 	FVector LaunchDirection = (CurrentDeliveryLocation - GetActorLocation()).GetSafeNormal();
-	FVector ProjectileVelocity = LaunchDirection * 1000.0f;
-	ProjectileVelocity.Z += 500.0f;
+	FVector ProjectileVelocity = LaunchDirection * PackageThrowForce;
+	ProjectileVelocity.Z += PackageLaunchForce;
 
-	AudioComponent->SetSound(ThrowPackage);
-	AudioComponent->Play();
+	//AudioComponent->SetSound(ThrowPackage);
+	//AudioComponent->Play();
 
 	// Set the projectile's velocity and fire it
-	SpawnedPackage->GetProjectileMovementComponent()->Velocity = ProjectileVelocity;
-	SpawnedPackage->GetProjectileMovementComponent()->Activate();
-	DrawDebugLine(GetWorld(), GetActorLocation(), CurrentDeliveryLocation, FColor::Yellow, true);
+	SpawnedPackage->ThrowPackage(PackageThrowForce, LaunchDirection, PackageLaunchForce);
+
+
+	// Calculate the random offset for the throw direction
+	//const FVector ThrowDirection = ProjectileMovementComponent->Velocity.GetSafeNormal();
+	//const FVector RandomOffset = FVector(GetRandomOffset(true), GetRandomOffset(true), GetRandomOffset(false));
+	//const FVector RandomThrowDirection = (ThrowDirection + RandomOffset).GetSafeNormal();
+	//
+	//// Set the initial position and rotation of the child grenade
+	//this->SetActorLocation(GetActorLocation());
+	//this->SetActorRotation(FRotationMatrix::MakeFromX(RandomThrowDirection).Rotator());
+	//
+	//// Calculate the velocity needed to throw the child grenade in an arc trajectory
+	//FVector ChildGrenadeVelocity = RandomThrowDirection * ThrowForce;
+	//ChildGrenadeVelocity.Z += UpwardForce; // Add some upward force to make it arc
+	//
+	//// Apply the velocity to the ProjectileMovementComponent
+	//this->ProjectileMovementComponent->SetVelocityInLocalSpace(ChildGrenadeVelocity);
+	//// Start moving the child grenade
+	//this->ProjectileMovementComponent->SetActive(true);
 }
 
 void APlayerCharacter::UpdateDeliveryData(FKey NewKey, FVector DeliveryLocation, bool bInCurrentZone)

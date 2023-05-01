@@ -13,12 +13,29 @@ ADeliveryPackages::ADeliveryPackages()
 	RootComponent = DeliveryPackageMesh;
 
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileComponent"));
-	ProjectileMovementComponent->InitialSpeed =300.0f;
-	
+	ProjectileMovementComponent->SetUpdatedComponent(DeliveryPackageMesh);
+	ProjectileMovementComponent->bShouldBounce = false;
+	ProjectileMovementComponent->InitialSpeed = 0.0f;
+	ProjectileMovementComponent->bRotationFollowsVelocity = true;
+	ProjectileMovementComponent->bShouldBounce = true;
+	ProjectileMovementComponent->SetActive(false);
 }
+
 
 // Called when the game starts or when spawned
 void ADeliveryPackages::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+void ADeliveryPackages::ThrowPackage(const float ThrowForce, const FVector& ThrowDirection, const float UpwardForce)
+{
+	// Calculate the velocity needed to throw the grenade in an arc trajectory
+	FVector Velocity = ThrowDirection * ThrowForce;
+	Velocity.Z += UpwardForce; // Add some upward force to make it arc
+
+	// Apply the velocity to the ProjectileMovementComponent
+	ProjectileMovementComponent->SetVelocityInLocalSpace(Velocity);
+	// Start moving the grenade
+	ProjectileMovementComponent->SetActive(true);
 }

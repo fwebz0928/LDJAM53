@@ -22,16 +22,38 @@ public:
 	FTransform GetAttachPointTransform() const;
 	void SpawnHouses();
 
+protected:
+	virtual void OnConstruction(const FTransform& Transform) override;
+	virtual void Destroyed() override;
+
 private:
+	TArray<FTransform> SpawnFoliageInArea(const FBoxSphereBounds& Bounds, int SpawnAmount) const;
+
+
 	UPROPERTY(Category=Spawning, EditAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
 	TSubclassOf<AHouse> HouseClass;
 
+	UPROPERTY()
+	TObjectPtr<AHouse> SpawnedHouse;
+
 	UPROPERTY(Category=Components, VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UStaticMeshComponent> RoadMesh;
+	UPROPERTY(Category=Components, VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UInstancedStaticMeshComponent> GrassMeshComponent;
+	UPROPERTY(Category=Components, VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UInstancedStaticMeshComponent> FlowerMeshComponent;
 	UPROPERTY(Category=Components, VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UBoxComponent> OverlapCollision;
 	UPROPERTY(Category=Components, VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UBoxComponent> HouseSpawnAreaRight;
 	UPROPERTY(Category=Components, VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UBoxComponent> HouseSpawnAreaLeft;
+	UPROPERTY(Category=Components, VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UBoxComponent> FoliageSpawnAreaRight;
+	UPROPERTY(Category=Components, VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UBoxComponent> FoliageSpawnAreaLeft;
+
+
+	UPROPERTY(Category=Components, EditAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
+	int FoliageSpawnAmount;
 };

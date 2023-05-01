@@ -18,6 +18,8 @@ class LDJAM_API ALDJAMGameModeBase : public AGameModeBase
 public:
 	UFUNCTION(BlueprintCallable)
 	void SpawnRoadTile(bool bSpawnHouses);
+	UFUNCTION(BlueprintCallable)
+	void MoveOldTileToNewLocation(ARoad* NewRoad, bool bSpawnHouses);
 
 protected:
 	virtual void BeginPlay() override;

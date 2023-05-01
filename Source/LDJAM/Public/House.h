@@ -34,6 +34,9 @@ private:
 	UPROPERTY(Category=Character, VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UArrowComponent> DeliveryLocation;
 	UPROPERTY(Category=Character, VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UNiagaraComponent> ChimneyFX;
+
+	UPROPERTY(Category=Character, VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UStaticMeshComponent> TriggerBox;
 	UPROPERTY(Category=Character, VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UBoxComponent> TriggerZone;
@@ -44,4 +47,7 @@ private:
 	TArray<FKey> RightSideKeys;
 	UPROPERTY(Category=HouseData, EditAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
 	TArray<FKey> LeftSideKeys;
+	UPROPERTY(Category=HouseData, EditAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
+	TArray<TObjectPtr<UStaticMesh>> HouseMeshes;
+
 };

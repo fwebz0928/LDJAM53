@@ -93,7 +93,10 @@ private:
 	//Package Throwing
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="GameData|Delivery", meta=(AllowPrivateAccess = "true"))
 	TSubclassOf<ADeliveryPackages> PackageClass;
-
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="GameData|Delivery", meta=(AllowPrivateAccess = "true"))
+	float PackageThrowForce;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="GameData|Delivery", meta=(AllowPrivateAccess = "true"))
+	float PackageLaunchForce;
 
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "GameData", meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<APlayerController> PController;
@@ -105,6 +108,7 @@ private:
 	int Score;
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "GameData", meta=(AllowPrivateAccess = "true"))
 	int Health;
+
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "GameData", meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<USoundBase> ScoreSFX;

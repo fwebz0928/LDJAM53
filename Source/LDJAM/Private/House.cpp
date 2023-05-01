@@ -18,6 +18,9 @@ AHouse::AHouse()
 	DeliveryLocation = CreateDefaultSubobject<UArrowComponent>(TEXT("DeliverLocation"));
 	DeliveryLocation->SetupAttachment(RootComponent);
 
+	ChimneyFX = CreateDefaultSubobject<UNiagaraComponent>(TEXT("ChimneyFX"));
+	ChimneyFX->SetupAttachment(RootComponent);
+
 	TriggerBox = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TriggerBox"));
 	TriggerBox->SetupAttachment(RootComponent);
 
@@ -29,6 +32,14 @@ AHouse::AHouse()
 void AHouse::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//Set a random mesh for the house
+	int RandIndex = FMath::RandRange(0, HouseMeshes.Num() - 1);
+	HouseMesh->SetStaticMesh(HouseMeshes[RandIndex]);
+
+	//Update the fx location of the meshes chimney
+	FVector ChimneyLocation = HouseMesh->GetSocketLocation("FXSocket");
+	ChimneyFX->SetRelativeLocation(ChimneyLocation);
 }
 FKey AHouse::GetRandomKey()
 {

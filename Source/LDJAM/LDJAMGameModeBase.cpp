@@ -17,10 +17,19 @@ void ALDJAMGameModeBase::BeginPlay()
 		SpawnRoadTile(true);
 }
 
-
 void ALDJAMGameModeBase::SpawnRoadTile(bool bSpawnHouses)
 {
 	auto NewRoad = GetWorld()->SpawnActor<ARoad>(RoadClass, NextAttachPoint);
+	NextAttachPoint = NewRoad->GetAttachPointTransform();
+	if (bSpawnHouses)
+		NewRoad->SpawnHouses();
+}
+
+
+void ALDJAMGameModeBase::MoveOldTileToNewLocation(ARoad* NewRoad, bool bSpawnHouses)
+{
+	//auto NewRoad = GetWorld()->SpawnActor<ARoad>(RoadClass, NextAttachPoint);
+	NewRoad->SetActorTransform(NextAttachPoint);
 	NextAttachPoint = NewRoad->GetAttachPointTransform();
 	if (bSpawnHouses)
 		NewRoad->SpawnHouses();

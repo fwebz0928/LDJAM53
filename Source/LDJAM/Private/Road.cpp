@@ -2,8 +2,8 @@
 
 
 #include "Road.h"
-
 #include "Components/BoxComponent.h"
+#include "Components/InstancedStaticMeshComponent.h"
 
 // Sets default values
 ARoad::ARoad()
@@ -14,6 +14,10 @@ ARoad::ARoad()
 	RoadMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("RoadMesh"));
 	RootComponent = RoadMesh;
 
+	GrassMeshComponent = CreateDefaultSubobject<UInstancedStaticMeshComponent>(TEXT("GrassInstanceMesh"));
+	FlowerMeshComponent = CreateDefaultSubobject<UInstancedStaticMeshComponent>(TEXT("FlowerInstanceMesh"));
+
+
 	OverlapCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("OverlapCollision"));
 	OverlapCollision->SetupAttachment(RootComponent);
 
@@ -22,6 +26,13 @@ ARoad::ARoad()
 
 	HouseSpawnAreaRight = CreateDefaultSubobject<UBoxComponent>(TEXT("HouseSpawnRight"));
 	HouseSpawnAreaRight->SetupAttachment(RootComponent);
+
+	FoliageSpawnAreaLeft = CreateDefaultSubobject<UBoxComponent>(TEXT("FoliageSpawnAreaLeft"));
+	FoliageSpawnAreaLeft->SetupAttachment(RootComponent);
+
+
+	FoliageSpawnAreaRight = CreateDefaultSubobject<UBoxComponent>(TEXT("FoliageSpawnAreaRight"));
+	FoliageSpawnAreaRight->SetupAttachment(RootComponent);
 }
 
 
@@ -55,15 +66,64 @@ void ARoad::SpawnHouses()
 
 
 	//Spawn the House 
-	FVector BoxSize = FVector(100.0f, 100.0f, 100.0f);
-	//DrawDebugBox(GetWorld(), RandPoint, BoxSize, FColor::Blue, true);
-	auto SpawnedHouse = GetWorld()->SpawnActor<AHouse>(HouseClass, RandPoint, SpawnRot);
+	SpawnedHouse = GetWorld()->SpawnActor<AHouse>(HouseClass, RandPoint, SpawnRot);
 	SpawnedHouse->bRightSide = RandBool;
 
 	//Trace downward to detect the ground to make sure the house is always on the ground
 	FHitResult HitResult;
-	FVector EndLoc = GetActorLocation() + -GetActorUpVector() * 1000.0f;
-	DrawDebugLine(GetWorld(), GetActorLocation(), EndLoc, FColor::Blue, true);
+	FVector HouseLoc = SpawnedHouse->GetActorLocation();
+	FVector EndLoc = HouseLoc + -SpawnedHouse->GetActorUpVector() * 1000.0f;
+	DrawDebugLine(GetWorld(), HouseLoc, EndLoc, FColor::Blue, true);
 	if (GetWorld()->LineTraceSingleByChannel(HitResult, SpawnedHouse->GetActorLocation(), EndLoc, ECC_Visibility, FCollisionQueryParams::DefaultQueryParam))
-		SpawnedHouse->SetActorLocation(HitResult.ImpactPoint);
+	{
+		FVector NewLocation = FVector(HouseLoc.X, HouseLoc.Y, HitResult.ImpactPoint.Z);
+		SpawnedHouse->SetActorLocation(NewLocation);
+	}
+}
+void ARoad::OnConstruction(const FTransform& Transform)
+{
+	TArray<FTransform> FoliageTransforms;
+	TArray<FTransform> FlowerTransforms;
+	FoliageTransforms.Empty();
+	FlowerTransforms.Empty();
+	GrassMeshComponent->ClearInstances();
+	FlowerMeshComponent->ClearInstances();
+
+	FoliageTransforms += SpawnFoliageInArea(FoliageSpawnAreaLeft->Bounds, FoliageSpawnAmount);
+	FoliageTransforms += SpawnFoliageInArea(FoliageSpawnAreaRight->Bounds, FoliageSpawnAmount);
+	FlowerTransforms += SpawnFoliageInArea(FoliageSpawnAreaLeft->Bounds, 100);
+	FlowerTransforms += SpawnFoliageInArea(FoliageSpawnAreaRight->Bounds, 100);
+
+	FlowerMeshComponent->AddInstances(FlowerTransforms, false);
+	GrassMeshComponent->AddInstances(FoliageTransforms, false);
+}
+void ARoad::Destroyed()
+{
+	if (SpawnedHouse)
+		SpawnedHouse->Destroy();
+}
+
+TArray<FTransform> ARoad::SpawnFoliageInArea(const FBoxSphereBounds& Bounds, int SpawnAmount) const
+{
+	TArray<FTransform> OutTransforms;
+	FVector Origin = Bounds.Origin;
+	FVector BoxExtent = Bounds.BoxExtent;
+
+	for (int i = 0; i < SpawnAmount; ++i)
+	{
+		FVector RandPoint = Origin + FVector(FMath::FRandRange(-BoxExtent.X, BoxExtent.X),
+		                                     FMath::FRandRange(-BoxExtent.Y, BoxExtent.Y),
+		                                     FMath::FRandRange(-BoxExtent.Z, BoxExtent.Z));
+
+
+		FQuat RandomRotation = FQuat::MakeFromEuler(FVector(0, 0, FMath::RandRange(0.f, 360.f)));
+		RandomRotation.X = 0.0f;
+		RandomRotation.Y = 0.0f;
+
+		FTransform RandTransform;
+		RandTransform.SetLocation(RandPoint);
+		RandTransform.SetRotation(RandomRotation);
+		OutTransforms.Add(RandTransform);
+	}
+	return OutTransforms;
 }

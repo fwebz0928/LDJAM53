@@ -15,6 +15,7 @@ class LDJAM_API ADeliveryPackages : public AActor
 public:
 	// Sets default values for this actor's properties
 	ADeliveryPackages();
+	void ThrowPackage(const float ThrowForce, const FVector& ThrowDirection, const float UpwardForce);
 
 	UProjectileMovementComponent* GetProjectileMovementComponent() const { return ProjectileMovementComponent; }
 
