@@ -36,6 +36,6 @@ void ADeliveryPackages::ThrowPackage(const float ThrowForce, const FVector& Thro
 
 	// Apply the velocity to the ProjectileMovementComponent
 	ProjectileMovementComponent->SetVelocityInLocalSpace(Velocity);
-	// Start moving the grenade
+	// Start Moving The package
 	ProjectileMovementComponent->SetActive(true);
 }

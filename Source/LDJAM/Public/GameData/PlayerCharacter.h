@@ -100,7 +100,7 @@ private:
 
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "GameData", meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<APlayerController> PController;
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "GameData", meta=(AllowPrivateAccess = "true"))
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "GameData", meta=(AllowPrivateAccess = "true"))
 	float MoveSpeedMultiplier;
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "GameData", meta=(AllowPrivateAccess = "true"))
 	float MaxMoveSpeed;
@@ -108,6 +108,8 @@ private:
 	int Score;
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "GameData", meta=(AllowPrivateAccess = "true"))
 	int Health;
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "GameData", meta=(AllowPrivateAccess = "true"))
+	bool BWrongKeyPressed;
 
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "GameData", meta=(AllowPrivateAccess = "true"))
